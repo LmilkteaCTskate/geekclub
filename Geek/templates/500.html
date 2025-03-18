@@ -1,0 +1,320 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-code glitch-text" data-text="500">500</div>
+        <h1 class="error-title">系统故障</h1>
+        <p class="error-message">看来系统遇到了一些意外的故障</p>
+        <div class="error-details">
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="terminal-title">系统诊断</span>
+                    <div class="terminal-buttons">
+                        <span class="terminal-button"></span>
+                        <span class="terminal-button"></span>
+                        <span class="terminal-button"></span>
+                    </div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        > 正在诊断系统故障...
+                    </div>
+                    <div class="terminal-line">
+                        > 检测到异常...
+                    </div>
+                    <div class="terminal-line">
+                        > 正在尝试修复...
+                    </div>
+                    <div class="terminal-line blink">
+                        > 请稍后重试...
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="btn-back">
+                <span class="btn-text">返回主页</span>
+                <div class="btn-<thinking>
+现在让我们创建500错误页面，用于处理服务器内部错误。
+</thinking>
+
+<write_to_file>
+<path>templates/500.html</path>
+<content>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-code glitch-text" data-text="500">500</div>
+        <h1 class="error-title">系统故障</h1>
+        <p class="error-message">系统核心出现异常，工程师正在紧急修复中...</p>
+        <div class="error-details">
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="terminal-title">系统诊断</span>
+                    <div class="terminal-buttons">
+                        <span class="terminal-button"></span>
+                        <span class="terminal-button"></span>
+                        <span class="terminal-button"></span>
+                    </div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">><span class="typing">正在诊断系统错误...</span></div>
+                    <div class="terminal-line">><span class="typing">检测到异常进程...</span></div>
+                    <div class="terminal-line">><span class="typing">尝试恢复系统状态...</span></div>
+                    <div class="terminal-line">><span class="typing">请稍后重试...</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="btn-back">
+                <span class="btn-text">返回主页</span>
+                <div class="btn-glitch"></div>
+            </a>
+        </div>
+    </div>
+    <div class="matrix-bg"></div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.error-container {
+    min-height: calc(100vh - 160px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.error-content {
+    text-align: center;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    border: 1px solid #ff0055;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+}
+
+.error-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #ff005515, #ff00ff15);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.error-content:hover::before {
+    opacity: 1;
+}
+
+.error-code {
+    font-size: 8em;
+    color: #ff0055;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #ff0055;
+    position: relative;
+}
+
+.error-title {
+    font-size: 2em;
+    color: #fff;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.error-message {
+    color: #999;
+    margin-bottom: 30px;
+    font-size: 1.2em;
+}
+
+.terminal {
+    background: #0a0a0a;
+    border: 1px solid #ff0055;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.terminal-header {
+    background: #1a1a1a;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ff0055;
+}
+
+.terminal-title {
+    color: #ff0055;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.terminal-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.terminal-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #333;
+}
+
+.terminal-button:nth-child(1) { background: #ff5f56; }
+.terminal-button:nth-child(2) { background: #ffbd2e; }
+.terminal-button:nth-child(3) { background: #27c93f; }
+
+.terminal-body {
+    padding: 20px;
+    font-family: monospace;
+}
+
+.terminal-line {
+    color: #ff0055;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.typing {
+    color: #fff;
+    margin-left: 10px;
+    position: relative;
+    animation: typing 2s steps(40, end);
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+.btn-back {
+    display: inline-block;
+    padding: 15px 30px;
+    background: transparent;
+    border: 2px solid #ff0055;
+    color: #ff0055;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.btn-back:hover {
+    background: #ff0055;
+    color: #000;
+    box-shadow: 0 0 20px #ff0055;
+}
+
+.btn-glitch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, #ff005522, transparent);
+    background-size: 200% 200%;
+    animation: glitch-bg 3s ease infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn-back:hover .btn-glitch {
+    opacity: 0.2;
+}
+
+.matrix-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 1;
+}
+
+.matrix-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        0deg,
+        transparent 0%,
+        rgba(255, 0, 85, 0.1) 50%,
+        transparent 100%
+    );
+    animation: matrix-scan 3s linear infinite;
+}
+
+@keyframes matrix-scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+@keyframes glitch {
+    0% { text-shadow: 0.05em 0 0 #ff0055, -0.05em -0.025em 0 #ff00ff; }
+    25% { text-shadow: -0.05em -0.025em 0 #ff0055, 0.025em 0.025em 0 #ff00ff; }
+    50% { text-shadow: 0.025em 0.05em 0 #ff0055, -0.05em -0.05em 0 #ff00ff; }
+    75% { text-shadow: -0.05em -0.05em 0 #ff0055, -0.025em -0.025em 0 #ff00ff; }
+    100% { text-shadow: -0.025em 0 0 #ff0055, 0.025em -0.025em 0 #ff00ff; }
+}
+
+@media (max-width: 768px) {
+    .error-code {
+        font-size: 6em;
+    }
+
+    .error-title {
+        font-size: 1.5em;
+    }
+
+    .error-content {
+        padding: 20px;
+    }
+
+    .terminal-body {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+}
+
+/* 添加打字机效果的动画 */
+.terminal-line {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+.terminal-line:nth-child(1) { animation-delay: 0.5s; }
+.terminal-line:nth-child(2) { animation-delay: 1.5s; }
+.terminal-line:nth-child(3) { animation-delay: 2.5s; }
+.terminal-line:nth-child(4) { animation-delay: 3.5s; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}

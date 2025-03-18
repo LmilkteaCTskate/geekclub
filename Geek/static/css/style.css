@@ -1,0 +1,99 @@
+
+:root {
+    /* 主题颜色 */
+    --primary: #0ff;
+    --secondary: #f0f;
+    --background: #000;
+    --surface: #111;
+    --surface-variant: #222;
+    --border: #333;
+    --text-primary: #fff;
+    --text-secondary: #aaa;
+    --text-muted: #666;
+    --glow: rgba(0, 255, 255, 0.5);
+    
+    /* 字体 */
+    font-family: 'Rajdhani', 'Microsoft YaHei', sans-serif;
+}
+
+/* 全局样式 */
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--background);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
+}
+
+/* 选中文本样式 */
+::selection {
+    background: var(--primary);
+    color: var(--background);
+}
+
+/* 链接样式 */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--secondary);
+    text-shadow: 0 0 10px var(--glow);
+}
+
+/* 输入框样式 */
+input, select, textarea {
+    background: var(--surface-variant);
+    border: 1px solid var(--primary);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--glow);
+    border-color: var(--secondary);
+}
+
+/* 按钮基础样式 */
+button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* 动画效果 */
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--glow);
+    }
+    50% {
+        box-shadow: 0 0 20px var(--glow);
+    }
+    100% {
+        box-shadow: 0 0 5px var(--glow);
+    }
+}

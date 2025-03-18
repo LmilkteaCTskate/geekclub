@@ -1,0 +1,300 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="about-container">
+    <div class="page-header">
+        <h1 class="glitch-text" data-text="关于我们">关于我们</h1>
+        <p class="subtitle">探索数字世界的先锋者</p>
+    </div>
+
+    <div class="about-content">
+        <div class="about-section mission">
+            <div class="section-header">
+                <h2>我们的使命</h2>
+                <div class="header-line"></div>
+            </div>
+            <p>我们致力于培养网络安全领域的未来人才，通过实践和创新推动技术发展。在这里，你将接触到最前沿的技术，参与最具挑战性的项目。</p>
+        </div>
+
+        <div class="about-grid">
+            <div class="about-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>PWN组</h3>
+                <p>专注于二进制漏洞利用技术研究，培养系统安全专家。</p>
+            </div>
+            <div class="about-card">
+                <i class="fas fa-undo"></i>
+                <h3>Reverse组</h3>
+                <p>深入研究软件逆向工程，解析程序运行机制。</p>
+            </div>
+            <div class="about-card">
+                <i class="fas fa-puzzle-piece"></i>
+                <h3>MiSC组</h3>
+                <p>涉及多个安全领域，培养全面的安全技能。</p>
+            </div>
+            <div class="about-card">
+                <i class="fas fa-key"></i>
+                <h3>Crypto组</h3>
+                <p>研究现代密码学，保护数据安全。</p>
+            </div>
+            <div class="about-card">
+                <i class="fas fa-network-wired"></i>
+                <h3>网络工程组</h3>
+                <p>专注网络架构与安全，构建安全通信基础。</p>
+            </div>
+            <div class="about-card">
+                <i class="fas fa-globe"></i>
+                <h3>Web组</h3>
+                <p>研究Web安全技术，保护网络应用安全。</p>
+            </div>
+        </div>
+
+        <div class="about-section achievements">
+            <div class="section-header">
+                <h2>我们的成就</h2>
+                <div class="header-line"></div>
+            </div>
+            <div class="achievement-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2023</div>
+                    <div class="timeline-content">
+                        <h3>全国大学生信息安全竞赛一等奖</h3>
+                        <p>团队在比赛中展现出色的技术实力和创新思维。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2022</div>
+                    <div class="timeline-content">
+                        <h3>国际CTF竞赛TOP10</h3>
+                        <p>在国际赛事中崭露头角，展现中国力量。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section contact">
+            <div class="section-header">
+                <h2>联系我们</h2>
+                <div class="header-line"></div>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <p>contact@cyberpunkclub.com</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>信息学院大楼 B区404室</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.about-container {
+    padding: 40px 20px;
+    background: #000;
+    min-height: 100vh;
+    color: #fff;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.glitch-text {
+    font-size: 3em;
+    color: #fff;
+    text-transform: uppercase;
+    position: relative;
+    text-shadow: 0.05em 0 0 #ff00ff, -0.05em -0.025em 0 #00ffff;
+    animation: glitch 1s infinite;
+}
+
+.subtitle {
+    color: #0ff;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.about-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-section {
+    margin-bottom: 60px;
+    padding: 30px;
+    background: #1a1a1a;
+    border: 1px solid #0ff;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #ff00ff15, #00ffff15);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.about-section:hover::before {
+    opacity: 1;
+}
+
+.section-header {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.section-header h2 {
+    color: #0ff;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.header-line {
+    width: 100px;
+    height: 2px;
+    background: #0ff;
+    position: relative;
+}
+
+.header-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0ff;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.section-header:hover .header-line::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.about-card {
+    padding: 30px;
+    background: #1a1a1a;
+    border: 1px solid #0ff;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.about-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.about-card i {
+    font-size: 2.5em;
+    color: #0ff;
+    margin-bottom: 20px;
+}
+
+.about-card h3 {
+    color: #0ff;
+    margin-bottom: 15px;
+}
+
+.achievement-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.timeline-date {
+    width: 100px;
+    padding: 10px;
+    background: #0ff;
+    color: #000;
+    text-align: center;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.timeline-content {
+    flex: 1;
+    padding: 20px;
+    background: #1a1a1a;
+    border: 1px solid #0ff;
+}
+
+.timeline-content h3 {
+    color: #0ff;
+    margin-bottom: 10px;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-item i {
+    color: #0ff;
+    font-size: 1.5em;
+}
+
+@keyframes glitch {
+    0% { text-shadow: 0.05em 0 0 #ff00ff, -0.05em -0.025em 0 #00ffff; }
+    25% { text-shadow: -0.05em -0.025em 0 #ff00ff, 0.025em 0.025em 0 #00ffff; }
+    50% { text-shadow: 0.025em 0.05em 0 #ff00ff, -0.05em -0.05em 0 #00ffff; }
+    75% { text-shadow: -0.05em -0.05em 0 #ff00ff, -0.025em -0.025em 0 #00ffff; }
+    100% { text-shadow: -0.025em 0 0 #ff00ff, 0.025em -0.025em 0 #00ffff; }
+}
+
+@media (max-width: 768px) {
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .timeline-item {
+        flex-direction: column;
+    }
+    
+    .timeline-date {
+        width: auto;
+        margin-bottom: 10px;
+    }
+    
+    .glitch-text {
+        font-size: 2em;
+    }
+}
+</style>
+{% endblock %}

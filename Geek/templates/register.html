@@ -1,0 +1,246 @@
+
+{% extends "base.html" %}
+
+{% block title %}报名{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h2 class="register-title">加入我们</h2>
+            <p class="register-subtitle">填写下面的表单，开启你的极客之旅</p>
+        </div>
+
+        <form class="register-form" method="POST">
+            <div class="form-group">
+                <label for="name">
+                    <i class="fas fa-user"></i>
+                    姓名
+                </label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="grade">
+                        <i class="fas fa-graduation-cap"></i>
+                        年级
+                    </label>
+                    <select id="grade" name="grade" required>
+                        <option value="">请选择年级</option>
+                        <option value="大一">大一</option>
+                        <option value="大二">大二</option>
+                        <option value="大三">大三</option>
+                        <option value="大四">大四</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="class_name">
+                        <i class="fas fa-chalkboard"></i>
+                        班级
+                    </label>
+                    <input type="text" id="class_name" name="class_name" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="student_id">
+                    <i class="fas fa-id-card"></i>
+                    学号
+                </label>
+                <input type="text" id="student_id" name="student_id" required>
+            </div>
+
+            <div class="form-group">
+                <label for="team">
+                    <i class="fas fa-users"></i>
+                    意向组别
+                </label>
+                <select id="team" name="team" required>
+                    <option value="">请选择组别</option>
+                    {% for team in teams %}
+                    <option value="{{ team }}">{{ team }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="reason">
+                    <i class="fas fa-comment"></i>
+                    加入原因
+                </label>
+                <textarea id="reason" name="reason" rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i>
+                提交申请
+            </button>
+        </form>
+    </div>
+
+    <div class="info-card">
+        <h3 class="info-title">
+            <i class="fas fa-info-circle"></i>
+            报名须知
+        </h3>
+        <ul class="info-list">
+            <li>请确保填写的信息真实有效</li>
+            <li>我们会在3个工作日内处理你的申请</li>
+            <li>申请结果将通过邮件通知</li>
+            <li>如有疑问，请联系我们的管理员</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        display: grid;
+        gap: 30px;
+        grid-template-columns: 2fr 1fr;
+        align-items: start;
+    }
+
+    .register-card {
+        background: var(--surface);
+        border: 1px solid var(--primary);
+        padding: 30px;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .register-title {
+        color: var(--primary);
+        margin: 0 0 10px;
+        font-size: 2em;
+    }
+
+    .register-subtitle {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .register-form {
+        display: grid;
+        gap: 20px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: grid;
+        gap: 8px;
+    }
+
+    .form-group label {
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-group label i {
+        color: var(--primary);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        background: var(--surface-variant);
+        border: 1px solid var(--primary);
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 1em;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--secondary);
+        box-shadow: 0 0 10px var(--glow);
+    }
+
+    .submit-btn {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 12px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .submit-btn:hover {
+        background: var(--primary);
+        color: var(--background);
+    }
+
+    .info-card {
+        background: var(--surface);
+        border: 1px solid var(--primary);
+        padding: 25px;
+        position: sticky;
+        top: 80px;
+    }
+
+    .info-title {
+        color: var(--primary);
+        margin: 0 0 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        color: var(--text-secondary);
+    }
+
+    .info-list li {
+        margin-bottom: 15px;
+        padding-left: 20px;
+        position: relative;
+    }
+
+    .info-list li::before {
+        content: '•';
+        color: var(--primary);
+        position: absolute;
+        left: 0;
+    }
+
+    @media (max-width: 768px) {
+        .register-container {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .info-card {
+            position: static;
+        }
+    }
+</style>
+{% endblock %}

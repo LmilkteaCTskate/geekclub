@@ -1,0 +1,251 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="edit-activity-container">
+    <div class="page-header">
+        <h1 class="glitch-text" data-text="{{ 'Edit Activity' if activity else 'New Activity' }}">
+            {{ '编辑活动' if activity else '新建活动' }}
+        </h1>
+    </div>
+
+    <div class="form-container">
+        <form method="POST" class="activity-form">
+            <div class="form-group">
+                <label for="title">活动名称</label>
+                <div class="input-wrapper">
+                    <input type="text" id="title" name="title" required
+                           value="{{ activity.title if activity else '' }}">
+                    <div class="input-line"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="date">活动时间</label>
+                <div class="input-wrapper">
+                    <input type="datetime-local" id="date" name="date" required
+                           value="{{ activity.date.strftime('%Y-%m-%dT%H:%M') if activity else '' }}">
+                    <div class="input-line"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="location">活动地点</label>
+                <div class="input-wrapper">
+                    <input type="text" id="location" name="location" required
+                           value="{{ activity.location if activity else '' }}">
+                    <div class="input-line"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">活动描述</label>
+                <div class="input-wrapper">
+                    <textarea id="description" name="description" rows="6" required>{{ activity.description if activity else '' }}</textarea>
+                    <div class="input-line"></div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">{{ '保存修改' if activity else '创建活动' }}</span>
+                    <div class="btn-glitch"></div>
+                </button>
+                <a href="{{ url_for('admin_dashboard') }}" class="cancel-btn">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.edit-activity-container {
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-container {
+    background: #1a1a1a;
+    border: 1px solid #0ff;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #ff00ff15, #00ffff15);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.form-container:hover::before {
+    opacity: 1;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #0ff;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #0ff;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid #666;
+    color: #fff;
+    font-size: 1em;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: #0ff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+input:focus + .input-line,
+textarea:focus + .input-line {
+    transform: scaleX(1);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.submit-btn, .cancel-btn {
+    padding: 15px 30px;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn {
+    background: transparent;
+    border: 2px solid #0ff;
+    color: #0ff;
+    flex: 1;
+}
+
+.submit-btn:hover {
+    background: #0ff;
+    color: #000;
+    box-shadow: 0 0 20px #0ff;
+}
+
+.cancel-btn {
+    background: transparent;
+    border: 2px solid #666;
+    color: #666;
+    text-decoration: none;
+    text-align: center;
+    flex: 1;
+}
+
+.cancel-btn:hover {
+    border-color: #ff0055;
+    color: #ff0055;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+}
+
+.btn-glitch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, #0ff22, transparent);
+    background-size: 200% 200%;
+    animation: glitch-bg 3s ease infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.submit-btn:hover .btn-glitch {
+    opacity: 0.2;
+}
+
+@keyframes glitch-bg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 添加输入动画效果 */
+@keyframes inputFocus {
+    0% { box-shadow: 0 0 0 rgba(0, 255, 255, 0); }
+    50% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+    100% { box-shadow: 0 0 0 rgba(0, 255, 255, 0); }
+}
+
+input:focus, textarea:focus {
+    animation: inputFocus 2s infinite;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .edit-activity-container {
+        padding: 20px 10px;
+    }
+
+    .form-container {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .submit-btn, .cancel-btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,965 @@
+
+{% extends "admin/base.html" %}
+
+{% block title %}仪表盘{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- 页面标题和刷新按钮 -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-tachometer-alt"></i>
+            仪表盘
+        </h1>
+        <button class="refresh-btn" onclick="refreshDashboard()">
+            <i class="fas fa-sync-alt"></i>
+            刷新数据
+        </button>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">总报名人数</h3>
+                <p class="stat-value">{{ total_registrations }}</p>
+                <p class="stat-change increase">
+                    <i class="fas fa-arrow-up"></i>
+                    较上月增长 {{ registration_growth }}%
+                </p>
+            </div>
+        </div>
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">进行中活动</h3>
+                <p class="stat-value">{{ active_activities }}</p>
+                <p class="stat-change">
+                    <i class="fas fa-clock"></i>
+                    {{ upcoming_activities }} 个即将开始
+                </p>
+            </div>
+        </div>
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">本月活跃度</h3>
+                <p class="stat-value">{{ monthly_activity_rate }}%</p>
+                <p class="stat-change increase">
+                    <i class="fas fa-arrow-up"></i>
+                    较上月增长 {{ activity_growth }}%
+                </p>
+            </div>
+        </div>
+        <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="stat-icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="stat-info">
+                <h3 class="stat-title">完成率</h3>
+                <p class="stat-value">{{ completion_rate }}%</p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: {{ completion_rate }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 活动概览和最近报名 -->
+    <div class="dashboard-grid">
+        <!-- 活动概览 -->
+        <div class="dashboard-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    活动概览
+                </h2>
+                <div class="card-actions">
+                    <a href="{{ url_for('admin_new_activity') }}" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        新建活动
+                    </a>
+                    <a href="{{ url_for('admin_activities') }}" class="btn-link">
+                        查看全部
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="activities-list">
+                {% for activity in recent_activities %}
+                <div class="activity-item" data-aos="fade-right" data-aos-delay="{{ loop.index * 100 }}">
+                    <div class="activity-status {{ 'active' if activity.is_active else 'completed' }}">
+                        <i class="fas fa-{{ 'circle' if activity.is_active else 'check-circle' }}"></i>
+                    </div>
+                    <div class="activity-info">
+                        <h3 class="activity-name">{{ activity.title }}</h3>
+                        <div class="activity-meta">
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                {{ activity.date.strftime('%Y-%m-%d %H:%M') }}
+                            </span>
+                            <span>
+                                <i class="fas fa-users"></i>
+                                {{ activity.participant_count }} 人报名
+                            </span>
+                            <span>
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ activity.location }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="activity-actions">
+                        <a href="{{ url_for('admin_edit_activity', id=activity.id) }}" class="btn-icon" title="编辑">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button class="btn-icon" onclick="confirmDelete('activity', {{ activity.id }}, '{{ activity.title }}')" title="删除">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                {% else %}
+                <div class="no-data">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>暂无活动</p>
+                    <a href="{{ url_for('admin_new_activity') }}" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        创建第一个活动
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 最近报名 -->
+        <div class="dashboard-card" data-aos="fade-up" data-aos-delay="600">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-user-plus"></i>
+                    最近报名
+                </h2>
+                <a href="{{ url_for('admin_registrations') }}" class="btn-link">
+                    查看全部
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="registrations-list">
+                {% for registration in recent_registrations %}
+                <div class="registration-item" data-aos="fade-left" data-aos-delay="{{ loop.index * 100 }}">
+                    <div class="registration-info">
+                        <div class="registration-user">
+                            <div class="user-avatar">
+                                {{ registration.name[0] }}
+                            </div>
+                            <div class="user-details">
+                                <h3 class="user-name">{{ registration.name }}</h3>
+                                <p class="user-meta">{{ registration.grade }} - {{ registration.class_name }}</p>
+                            </div>
+                        </div>
+                        <div class="registration-activity">
+                            <span class="activity-tag">{{ registration.activity.title }}</span>
+                            <span class="registration-time">
+                                <i class="fas fa-clock"></i>
+                                {{ registration.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </span>
+                        </div>
+                        <div class="registration-contact">
+                            <span title="电话">
+                                <i class="fas fa-phone"></i>
+                                {{ registration.phone }}
+                            </span>
+                            <span title="邮箱">
+                                <i class="fas fa-envelope"></i>
+                                {{ registration.email }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="registration-actions">
+                        <button class="btn-icon" onclick="viewRegistrationDetails({{ registration.id|tojson }})" title="查看详情">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon" onclick="confirmDelete('registration', {{ registration.id|tojson }}, {{ registration.name|tojson }})" title="删除">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                {% else %}
+                <div class="no-data">
+                    <i class="fas fa-user-times"></i>
+                    <p>暂无报名记录</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认对话框 -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <h2 class="modal-title">
+            <i class="fas fa-exclamation-triangle"></i>
+            确认删除
+        </h2>
+        <p class="modal-message"></p>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal()">取消</button>
+            <button class="btn-danger" onclick="executeDelete()">
+                <i class="fas fa-trash-alt"></i>
+                确认删除
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 加载动画 -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+    .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* 页面标题样式 */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        color: var(--primary);
+        font-size: 2em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .refresh-btn {
+        background: none;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .refresh-btn:hover {
+        background: var(--primary);
+        color: var(--background);
+    }
+
+    .refresh-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .refresh-btn.loading i {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* 统计卡片样式 */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--primary);
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.5s ease;
+    }
+
+    .stat-card:hover::before {
+        transform: translateX(100%);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px var(--glow);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(0, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        color: var(--primary);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1);
+        background: var(--primary);
+        color: var(--background);
+    }
+
+    .stat-info {
+        flex: 1;
+    }
+
+    .stat-title {
+        color: var(--text-secondary);
+        margin: 0 0 5px;
+        font-size: 0.9em;
+        font-weight: normal;
+    }
+
+    .stat-value {
+        color: var(--primary);
+        font-size: 1.8em;
+        font-weight: bold;
+        margin: 0 0 5px;
+    }
+
+    .stat-change {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .stat-change.increase {
+        color: #00ff00;
+    }
+
+    .stat-change.decrease {
+        color: #ff0000;
+    }
+
+    .progress-bar {
+        height: 4px;
+        background: rgba(0, 255, 255, 0.1);
+        border-radius: 2px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        background: var(--primary);
+        transition: width 0.3s ease;
+    }
+
+    /* 仪表盘网格布局 */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+    }
+
+    /* 卡片通用样式 */
+    .dashboard-card {
+        background: var(--surface);
+        border: 1px solid var(--primary);
+        padding: 25px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        box-shadow: 0 0 20px var(--glow);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .card-title {
+        color: var(--primary);
+        margin: 0;
+        font-size: 1.3em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: var(--background);
+        padding: 8px 15px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+    }
+
+    .btn-link {
+        color: var(--secondary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.9em;
+        transition: all 0.3s ease;
+    }
+
+    .btn-link:hover {
+        color: var(--primary);
+    }
+
+    /* 活动列表样式 */
+    .activities-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border: 1px solid var(--primary);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .activity-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 0 10px var(--glow);
+    }
+
+    .activity-status {
+        font-size: 1.2em;
+    }
+
+    .activity-status.active {
+        color: var(--primary);
+    }
+
+    .activity-status.completed {
+        color: #00ff00;
+    }
+
+    .activity-info {
+        flex: 1;
+    }
+
+    .activity-name {
+        color: var(--text-primary);
+        margin: 0 0 5px;
+        font-size: 1.1em;
+    }
+
+    .activity-meta {
+        display: flex;
+        gap: 15px;
+        color: var(--text-secondary);
+        font-size: 0.9em;
+    }
+
+    .activity-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .activity-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* 报名列表样式 */
+    .registrations-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .registration-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border: 1px solid var(--primary);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .registration-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 0 10px var(--glow);
+    }
+
+    .registration-info {
+        flex: 1;
+    }
+
+    .registration-user {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 10px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        color: var(--background);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
+    .user-name {
+        color: var(--text-primary);
+        margin: 0 0 5px;
+        font-size: 1.1em;
+    }
+
+    .user-meta {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 0.9em;
+    }
+
+    .registration-activity {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .activity-tag {
+        background: rgba(0, 255, 255, 0.1);
+        color: var(--primary);
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 0.9em;
+    }
+
+    .registration-time {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .registration-contact {
+        display: flex;
+        gap: 15px;
+        color: var(--text-secondary);
+        font-size: 0.9em;
+    }
+
+    .registration-contact span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .registration-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* 按钮样式 */
+    .btn-icon {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-icon:hover {
+        color: var(--primary);
+        transform: scale(1.1);
+    }
+
+    .btn-secondary {
+        background: none;
+        border: 1px solid var(--text-secondary);
+        color: var(--text-secondary);
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-danger {
+        background: #ff0000;
+        border: none;
+        color: var(--text-primary);
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background: #cc0000;
+        transform: translateY(-2px);
+    }
+
+    /* 无数据状态 */
+    .no-data {
+        text-align: center;
+        padding: 30px;
+        color: var(--text-muted);
+    }
+
+    .no-data i {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .no-data p {
+        margin: 0 0 15px;
+    }
+
+    /* 模态框样式 */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+        animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .modal-content {
+        background: var(--surface);
+        border: 1px solid var(--primary);
+        padding: 25px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+        animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-title {
+        color: var(--primary);
+        margin: 0 0 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .modal-message {
+        color: var(--text-primary);
+        margin: 0 0 20px;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+
+    /* 加载动画 */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading-overlay.show {
+        display: flex;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid var(--text-secondary);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .activity-item,
+        .registration-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .activity-meta,
+        .registration-contact {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .activity-actions,
+        .registration-actions {
+            width: 100%;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .card-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-link {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // 初始化 AOS
+    AOS.init({
+        duration: 800,
+        once: true
+    });
+
+    // 删除确认对话框
+    let deleteType = '';
+    let deleteId = null;
+    let deleteName = '';
+
+    function confirmDelete(type, id, name) {
+        deleteType = type;
+        deleteId = id;
+        deleteName = name;
+
+        const modal = document.getElementById('deleteModal');
+        const message = modal.querySelector('.modal-message');
+        
+        message.textContent = `确定要删除${type === 'activity' ? '活动' : '报名记录'} "${name}" 吗？此操作不可撤销。`;
+        
+        modal.classList.add('show');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('show');
+    }
+
+    function showLoading() {
+        document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+        document.getElementById('loadingOverlay').classList.remove('show');
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `flash ${type}`;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            ${message}
+        `;
+        
+        const container = document.querySelector('.flash-messages') || document.body;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3300);
+    }
+
+    async function executeDelete() {
+        closeModal();
+        showLoading();
+
+        try {
+            const response = await fetch(`/admin/${deleteType}s/${deleteId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': getCSRFToken()
+                }
+            });
+
+            if (response.ok) {
+                showToast(`${deleteType === 'activity' ? '活动' : '报名记录'}删除成功`);
+                // 重新加载页面以更新数据
+                window.location.reload();
+            } else {
+                throw new Error('删除失败');
+            }
+        } catch (error) {
+            showToast('操作失败，请重试', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function viewRegistrationDetails(id) {
+        window.location.href = `/admin/registrations/${id}`;
+    }
+
+    async function refreshDashboard() {
+        const refreshBtn = document.querySelector('.refresh-btn');
+        refreshBtn.classList.add('loading');
+        refreshBtn.disabled = true;
+
+        try {
+            const response = await fetch('/admin/dashboard', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('刷新失败');
+            }
+        } catch (error) {
+            showToast('刷新失败，请重试', 'error');
+        } finally {
+            refreshBtn.classList.remove('loading');
+            refreshBtn.disabled = false;
+        }
+    }
+
+    // 监听 ESC 键关闭模态框
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // 点击模态框外部关闭
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+</script>
+{% endblock %}
